@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  tftp-server:
+    image: ghcr.io/km8io/boot-liner-tftp:latest-arm64
+    ports:
+      - "69:69/udp"
+    volumes:
+      - ./files/tftp:/app/tftp:ro
+    restart: unless-stopped
+  api-server:
+    image: ghcr.io/km8io/boot-liner-api:latest-arm64
+    ports:
+      - "8888:8888/tcp"
+    volumes:
+      - ./files/api:/app/api/files
+      - ./files/tftp:/app/api/tftp
+    restart: unless-stopped

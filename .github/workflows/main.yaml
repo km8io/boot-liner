@@ -1,0 +1,150 @@
+name: Deploy Images to GHCR
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-tftp-image:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: './tftp'
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@main
+
+      - name: 'Build Image'
+        run: |
+          docker build . --tag ghcr.io/km8io/boot-liner-tftp:latest
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: 'ghcr.io/km8io/boot-liner-tftp:latest'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+     
+      - name: 'Login to GitHub Container Registry'
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+
+      - name: 'Push Image'
+        run: |
+          docker push ghcr.io/km8io/boot-liner-tftp:latest
+  build-tftp-image-arm64:
+    runs-on: ubuntu-arm64
+    defaults:
+      run:
+        working-directory: './tftp'
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@main
+
+      - name: 'Build Image'
+        run: |
+          docker build . --tag ghcr.io/km8io/boot-liner-tftp:latest-arm64
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: 'ghcr.io/km8io/boot-liner-tftp:latest-arm64'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+     
+      - name: 'Login to GitHub Container Registry'
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+
+      - name: 'Push Image'
+        run: |
+          docker push ghcr.io/km8io/boot-liner-tftp:latest-arm64
+
+  build-api-image:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: './api'
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@main
+
+      - name: 'Build Image'
+        run: |
+          docker build . --tag ghcr.io/km8io/boot-liner-api:latest
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: 'ghcr.io/km8io/boot-liner-api:latest'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+     
+      - name: 'Login to GitHub Container Registry'
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+
+      - name: 'Push Image'
+        run: |
+          docker push ghcr.io/km8io/boot-liner-api:latest
+  build-api-image-arm64:
+    runs-on: ubuntu-arm64
+    defaults:
+      run:
+        working-directory: './api'
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@main
+
+      - name: 'Build Image'
+        run: |
+          docker build . --tag ghcr.io/km8io/boot-liner-api:latest-arm64
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: 'ghcr.io/km8io/boot-liner-api:latest-arm64'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+     
+      - name: 'Login to GitHub Container Registry'
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+
+      - name: 'Push Image'
+        run: |
+          docker push ghcr.io/km8io/boot-liner-api:latest-arm64

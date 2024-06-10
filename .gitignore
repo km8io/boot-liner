@@ -1,0 +1,4 @@
+files/api/*.ign
+files/butane/*.bu
+files/tftp/grub.cfg*
+files/tftp/*.efi
